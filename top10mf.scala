@@ -3,8 +3,6 @@
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
 
-import scala.collection.immutable.TreeMap
-
 object top10mf {
 
   def pairs(line: String) = {
@@ -46,6 +44,8 @@ object top10mf {
 
   }
 
+  def manOf[T: Manifest](t: T): Manifest[T] = manifest[T]
+
   def main(args: Array[String]) {
 
     val logFile = "/home/akshay/Documents/bigdata/soc-LiveJournal1Adj.txt"
@@ -54,10 +54,17 @@ object top10mf {
     val sc = new SparkContext(conf)
     val logData = sc.textFile(logFile)
     val userData = sc.textFile(userFile)
-    val mf = logData.flatMap(pairs).reduceByKey(fCount)
-    
-//    val usr = userData.map(line => (line.split(",")(0),line))
-//    usr.saveAsTextFile("/home/akshay/Documents/bigdata/assignment2/out3")
+    val usr = userData.map(line => (line.split(",")(0),line.split(",")(1)+"\t"+line.split(",")(2)+"\t"+line.split(",")(3)))
+    val mf = logData.flatMap(pairs).reduceByKey(fCount).sortBy(_._2,false).take(10).map(line => (line._1._1,(line._1._2,line._2)))
+
+    val mf1 = sc.parallelize(mf)
+    manOf(mf1)
+    manOf(usr)
+
+    val res = mf1.join(usr).map(line => (line._2._1._1,line._2._1._2+"\t"+line._2._2)).join(usr)
+    val res1 = res.map(line => line._2._1+"\t"+line._2._2)
+
+    res1.saveAsTextFile("/home/akshay/Documents/bigdata/assignment2/out4")
     sc.stop()
 
 
