@@ -1,5 +1,6 @@
 
 import org.apache.spark.{SparkConf, SparkContext}
+case class mf1(user1:Int, user2:Int, friends:String)
 
 object mutualFriendSQL {
 
@@ -35,11 +36,13 @@ object mutualFriendSQL {
 
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     import sqlContext.implicits._
-    case class mf1(user1:Int, user2:Int, friends:String)
+    
     val people = mf.map(line => mf1(line._1._1.trim.toInt,line._1._2.trim.toInt,line._2)).toDF()
     people.registerTempTable("people")
-
-
+    
+    //testing code below
+    val q = sqlContext.sql("select * from people")
+    val x = q.show()
 
     sc.stop()
 
