@@ -64,7 +64,7 @@ object top10mf {
     val res = mf1.join(usr).map(line => (line._2._1._1,line._2._1._2+"\t"+line._2._2)).join(usr)
     val res1 = res.map(line => line._2._1+"\t"+line._2._2)
 
-    res1.saveAsTextFile("/home/akshay/Documents/bigdata/assignment2/out4")
+    res1.repartition(1).saveAsTextFile("/home/akshay/Documents/bigdata/assignment2/out2")
     sc.stop()
 
 
