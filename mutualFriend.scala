@@ -50,7 +50,7 @@ object mutualFriend {
     val sc = new SparkContext(conf)
     val logData = sc.textFile(logFile)
     val mf = logData.flatMap(pairs).reduceByKey(fCount)
-    mf.saveAsTextFile("/home/akshay/Documents/bigdata/assignment2/out1")
+    mf.repartition(1).saveAsTextFile("/home/akshay/Documents/bigdata/assignment2/out1")
     sc.stop()
   }
 
