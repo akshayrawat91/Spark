@@ -21,8 +21,6 @@ object reviewPalo {
     val business = bData.map(line => if(line.split("::")(1).contains("Palo Alto")) (line.split("::")(0),line.split("::")(1))
       else ("notAvailable","NaN")).distinct().filter(line => !line._1.contains("notAvailable"))
 
-    //val bs = sc.parallelize()
-
     manOf(review)
     manOf(business)
 
